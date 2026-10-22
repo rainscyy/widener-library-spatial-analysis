@@ -46,6 +46,7 @@ body.map-view .people{display:none!important}body.map-view .map-panel{display:fl
 .map-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.map-legend span{display:inline-flex;align-items:center;gap:5px}.map-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
 .tools button.map-tab{background:var(--ink);color:var(--card)}
 @media(max-width:900px){.map-panel{height:auto}.map-stage{flex:none;height:440px}}
+.legend-head{font-size:12px;color:var(--muted);margin-bottom:6px;width:100%}.legend-head b{color:var(--ink);font-weight:600}.legend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px 14px;width:100%}.legend-grid>span{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink)}.legend-grid small{color:var(--muted)}.legend-row{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;width:100%;margin-top:3px}.legend-row em{font-style:normal;font-weight:600;width:44px}.legend-row span{display:inline-flex;align-items:center;gap:4px}.legend-note{font-size:11px;color:var(--muted);margin-top:5px}.map-legend{display:block}@media(max-width:900px){.legend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head><body><div class="shell">
 <header><span class="brand">Quantitative aesthetics</span><small>Classifiers / Raine + Pengfeiyu Chen</small><button class="record-exit" id="exitRecord">Exit recording view</button></header>
 <div class="intro"><div><h1>Harvard Widener Library</h1><p>Dual-Classifier ML Analysis of Space · Arch / door · Open / enclosed</p><p class="authors">Raine (Chunyu) Sha &amp; Pengfeiyu Chen</p></div><div class="tools"><label class="file">Load video<input id="videoFile" type="file" accept="video/*"></label><label class="file">Load scores<input id="scoreFile" type="file" accept=".json,application/json"></label><button id="curveMode" aria-pressed="false">Show raw curves</button><button class="primary" id="record">Recording view</button></div></div>
@@ -224,14 +225,28 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
     c.setHex(i<=cur?parseInt(COLORS[D.label[i]].slice(1),16):mix(COLORS[D.label[i]],'#efe3d8',.72));three.mesh.setColorAt(i,c);}
    three.mesh.instanceMatrix.needsUpdate=true;three.mesh.instanceColor.needsUpdate=true;lastCur=cur;lastModel=model;
    const [gx,gy]=G.pos[cur];[three.cur,three.edge].forEach(m=>{m.position.set(gx-G.C/2+.5,0,gy-G.R/2+.5);m.scale.set(1.3,H(dm[cur])+3,1.3);});three.cur.material.color.setHex(parseInt(COLORS[D.label[cur]].slice(1),16));}
-  const R=G.C*.5,asp=w/h;three.cam.left=-R*asp;three.cam.right=R*asp;three.cam.top=R;three.cam.bottom=-R;three.cam.updateProjectionMatrix();
+  const rad=Math.hypot(G.C,G.R)/2*1.06+1.5,asp=w/h,vy=rad*Math.sin(el)+4*Math.cos(el)+1,hy=Math.max(vy,rad/asp),hx=hy*asp;three.cam.left=-hx;three.cam.right=hx;three.cam.top=hy;three.cam.bottom=-hy;three.cam.updateProjectionMatrix();
   three.cam.position.set(Math.sin(az)*Math.cos(el)*30,Math.sin(el)*30,Math.cos(az)*Math.cos(el)*30);three.cam.lookAt(0,0,0);
   three.r.render(three.s,three.cam);
  }
- function renderLegend(){const L=M.models[model].label;const n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren();
-  if(style==='3d'){legend.innerHTML='<span>3D relief · one block per frame, grid from the '+model+' map · height = mean grey of the frame’s depth image (near = high) · colour = '+model+' cluster · drag to rotate, click a block to jump</span>';return;}
-  if(style==='rings'){legend.innerHTML='<span>outer = depth AE cluster</span><span>· ring = RGB AE cluster</span><span>· dot = edges AE cluster</span><span>· size = Raine classifier “open” score</span><span>· same colour in two rings ≠ same category</span>';return;}
-  COLORS.forEach((c,i)=>{const s=document.createElement('span');s.innerHTML=`<i style="background:${c};border-radius:${style==='shapes'?'2px':'50%'}"></i>C${i+1} · ${n[i]}`;legend.append(s);});const note=document.createElement('span');note.textContent='· '+NOTES[model];legend.append(note);}
+ const MEAN={ // our reading of the archetype frames (UMAP · k-means k=8), see Assignment 4 › Archetypes
+  depth:['deep long views','deep halls · furniture, chandeliers','tunnel corridors ending in an arch','stairs with a near railing','oblique views along a wall','close flat surfaces: doors, glass, columns','near railing · stair','foreground furniture'],
+  rgb:['warm arched stair corridors','bright corridors to a door','near grey walls, oblique','vaulted reading room','patterned floors, long halls','windows & murals on the landing','warm floors, doorways','red tables, green carpet'],
+  edges:['few lines: plain walls & corridors','strong oblique frames','dense ornament, chandeliers','reading-room ceiling grid (early)','doors, people, arches','corridor with a central door','reading-room ceiling grid (dense)','arched windows'],
+  clip:['stair landing, murals','stair corridor to the end door','reading room','marble corridor to a door','lobby, people, chandeliers','ornate warm rooms','wooden doors, close-up','red tables']};
+ function icon(k,shape){const c=document.createElement('canvas'),d=devicePixelRatio||1;c.width=c.height=18*d;c.style.width=c.style.height='18px';const x=c.getContext('2d');x.scale(d,d);x.fillStyle=COLORS[k];
+  if(shape==='rings'){x.beginPath();x.arc(9,9,8,0,7);x.fill();x.fillStyle=EMPTY;x.beginPath();x.arc(9,9,5.2,0,7);x.fill();x.fillStyle=COLORS[k];x.beginPath();x.arc(9,9,3.6,0,7);x.fill();}
+  else if(shape==='3d'){x.fillRect(3,7,12,9);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(3,4,12,3);}
+  else shapePath(x,shape,9,9,8);x.fill();return c;}
+ function renderLegend(){const D=M.models[model],L=D.label,n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren();
+  const head=document.createElement('div');head.className='legend-head';
+  if(style==='rings'){head.innerHTML='<b>Rings</b> · outer = depth cluster · inner disc = RGB cluster · centre dot = edges cluster · size = Raine’s classifier “open” score (bigger = more open). Colours below = each model’s own clusters.';legend.append(head);
+   ['depth','rgb','edges'].forEach(k=>{const row=document.createElement('div');row.className='legend-row';row.innerHTML=`<em>${k}</em>`;COLORS.forEach((c,i)=>{const s=document.createElement('span');s.title=MEAN[k][i];s.append(icon(i,'circle'));s.append(` C${i+1} ${MEAN[k][i]}`);row.append(s);});legend.append(row);});return;}
+  head.innerHTML=(style==='3d'?'<b>3D relief</b> · one block per frame · <b>height</b> = mean grey of the frame’s depth image (near = high) · ':'')+`<b>${MODELS.find(m=>m[0]===model)[1]}</b> · ${NOTES[model]} · solid = already passed in the video, pale = still ahead, outlined = now`+(style==='scatter'?' · position = raw UMAP map':' · grid built from the UMAP map (rows by y, each row by x)');legend.append(head);
+  const grid=document.createElement('div');grid.className='legend-grid';
+  COLORS.forEach((c,i)=>{const s=document.createElement('span');s.append(icon(i,style==='shapes'?SHAPES[i]:style==='3d'?'3d':'circle'));const t=document.createElement('span');t.innerHTML=`<b>C${i+1}</b> ${MEAN[model][i]} <small>· ${n[i]}</small>`;s.append(t);grid.append(s);});
+  legend.append(grid);const note=document.createElement('div');note.className='legend-note';note.textContent='Cluster names are our reading of the most typical frames, not labels the model learned.';legend.append(note);}
+
  const times=()=>window.ASSIGNMENT3_COMPARISON?.times||M.times;
  const openScore=i=>window.ASSIGNMENT3_COMPARISON?.groups?.[0]?.participants?.[0]?.scores?.[i]?.[0];
  function frameAt(t){const T=times();let lo=0,hi=T.length-1;while(lo<hi){const m=(lo+hi)>>1;if(T[m]<t)lo=m+1;else hi=m;}return lo>0&&Math.abs(T[lo-1]-t)<=Math.abs(T[lo]-t)?lo-1:lo;}
