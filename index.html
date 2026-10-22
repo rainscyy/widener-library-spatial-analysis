@@ -41,7 +41,7 @@ html{scroll-behavior:smooth}.atlas-link{color:var(--muted);text-decoration:none;
 body.map-view .people{display:none!important}body.map-view .map-panel{display:flex}
 .map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}.map-head h2{margin:0 0 4px}.map-head p{font-size:13px;max-width:560px}
 .map-models{display:flex;gap:6px;flex-wrap:wrap}.map-models button{padding:7px 13px;border-radius:999px;background:var(--pale);font-size:13px}.map-models button[aria-pressed=true]{background:var(--ink);color:var(--card)}
-.map-canvas{flex:1 1 0;min-height:0;width:100%;display:block;cursor:pointer;border-radius:4px;background:#f4ebe1}
+.map-canvas{flex:1 1 0;min-height:0;width:100%;display:block;cursor:pointer;border-radius:4px;background:var(--card)}
 .map-read{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.map-read strong{color:var(--ink);font-weight:600}
 .map-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.map-legend span{display:inline-flex;align-items:center;gap:5px}.map-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
 .tools button.map-tab{background:var(--ink);color:var(--card)}
@@ -50,7 +50,7 @@ body.map-view .people{display:none!important}body.map-view .map-panel{display:fl
 <header><span class="brand">Quantitative aesthetics</span><small>Classifiers / Raine + Pengfeiyu Chen</small><button class="record-exit" id="exitRecord">Exit recording view</button></header>
 <div class="intro"><div><h1>Harvard Widener Library</h1><p>Dual-Classifier ML Analysis of Space · Arch / door · Open / enclosed</p><p class="authors">Raine (Chunyu) Sha &amp; Pengfeiyu Chen</p></div><div class="tools"><label class="file">Load video<input id="videoFile" type="file" accept="video/*"></label><label class="file">Load scores<input id="scoreFile" type="file" accept=".json,application/json"></label><button id="curveMode" aria-pressed="false">Show raw curves</button><button class="primary" id="record">Recording view</button></div></div>
 <div id="status" role="status" aria-live="polite">Load your walkthrough and the scores from your trained models.</div><nav class="groups" id="groups" aria-label="Category set"></nav>
-<main><section class="video-panel" aria-label="Walkthrough"><div class="video-caption"><strong id="videoName">Walkthrough</strong><time id="clock">00:00 / —</time></div><div class="stage"><video id="video" controls playsinline preload="metadata"></video><div class="video-empty" id="videoEmpty"><strong>Your space, in motion.</strong><p>Choose a local video to begin.</p></div></div></section><div class="people" id="people"></div><section class="map-panel" id="mapPanel" aria-label="Autoencoder map"><div class="map-head"><div><h2>Autoencoder map</h2><p>Assignment 4 · the same 1000 frames, placed by what each model learned (UMAP, k-means k=8). Frames light up as the walk passes them; click a dot to jump there.</p></div><div class="map-models" id="mapModels" role="group" aria-label="Model"></div></div><canvas class="map-canvas" id="mapCanvas" tabindex="0" aria-label="Embedding map of all frames. Click a dot to seek the video."></canvas><div class="map-read" id="mapRead"></div><div class="map-legend" id="mapLegend"></div></section></main>
+<main><section class="video-panel" aria-label="Walkthrough"><div class="video-caption"><strong id="videoName">Walkthrough</strong><time id="clock">00:00 / —</time></div><div class="stage"><video id="video" controls playsinline preload="metadata"></video><div class="video-empty" id="videoEmpty"><strong>Your space, in motion.</strong><p>Choose a local video to begin.</p></div></div></section><div class="people" id="people"></div><section class="map-panel" id="mapPanel" aria-label="Autoencoder map"><div class="map-head"><div><h2>Autoencoder map</h2><p>Assignment 4 · the same 1000 frames, placed by what each model learned (UMAP, k-means k=8). One tile = one frame, arranged by the model’s map; tiles light up as the walk passes them. Click a tile to jump there.</p></div><div class="map-models" id="mapModels" role="group" aria-label="Model"></div></div><canvas class="map-canvas" id="mapCanvas" tabindex="0" aria-label="Embedding map of all frames. Click a dot to seek the video."></canvas><div class="map-read" id="mapRead"></div><div class="map-legend" id="mapLegend"></div></section></main>
 <footer>Curves: 1.5s mean · Bars: original frame scores · Scores compare two classes, not objective openness.<a class="atlas-link" href="#training-atlas">Image collections ↓</a></footer></div>
 <section class="training-atlas" id="training-atlas" aria-label="Training image atlas"><div class="atlas-intro"><div><span class="atlas-kicker">Image collections</span><h2>Learning to read space.</h2></div></div><div class="research-intent" aria-label="Our research intention">
 <div class="research-column"><h3>Elements &amp; space</h3><p>We chose <strong>arch / door</strong> and <strong>open / enclosed</strong> to connect architectural elements with the experience of space. The arches we focused on are fixed, often grey, and frame passage through an opening. Doors introduce a solid, movable surface within a smaller threshold: they can be open, half-open, or closed. Both shape access and visibility, but neither determines whether a space feels open or enclosed.</p></div>
@@ -172,36 +172,71 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
 (()=>{
  const M=window.ASSIGNMENT4_MAPS;if(!M)return;
  const COLORS=['#ff85b8','#ff6a1f','#1f6bb5','#ffc20e','#3a7d3b','#0fa9c0','#e8321a','#c9a8ef'];
- const MODELS=[['depth','Depth AE'],['rgb','RGB AE'],['edges','Edges AE'],['clip','CLIP (classifier backbone)']];
+ const EMPTY='#efe3d8',INK='#2b2521',CARD='#fbf6f0';
+ const SHAPES=['rounded','scallop','arch','flower','octagon','circle','star','diamond'];
+ const MODELS=[['depth','Depth AE'],['rgb','RGB AE'],['edges','Edges AE'],['clip','CLIP']];
+ const STYLES=[['shapes','Shapes'],['rings','Rings · 3 models'],['scatter','UMAP scatter']];
  const NOTES={depth:'groups by spatial form: tunnels, deep halls, close surfaces',rgb:'groups by light and colour, across places',edges:'groups by line density and ornament',clip:'pretrained reference: groups by place / object'};
- const nav=document.getElementById('groups'),panel=document.getElementById('mapPanel'),canvas=document.getElementById('mapCanvas'),read=document.getElementById('mapRead'),legend=document.getElementById('mapLegend'),box=document.getElementById('mapModels');
- const video=document.getElementById('video');let model='depth',pts=[];
+ const panel=document.getElementById('mapPanel'),canvas=document.getElementById('mapCanvas'),read=document.getElementById('mapRead'),legend=document.getElementById('mapLegend'),box=document.getElementById('mapModels');
+ const video=document.getElementById('video');let model='depth',style='shapes',cells=[],grid={};
  const tab=document.createElement('button');tab.className='map-tab';tab.textContent='Autoencoder map · Assignment 4';tab.setAttribute('aria-pressed','false');
  tab.addEventListener('click',()=>{const on=document.body.classList.toggle('map-view');tab.setAttribute('aria-pressed',String(on));tab.textContent=on?'Classifier curves · Assignment 3':'Autoencoder map · Assignment 4';draw();if(!on)window.dispatchEvent(new Event('resize'));});
  document.getElementById('record').before(tab);
- MODELS.forEach(([k,label])=>{const b=document.createElement('button');b.textContent=label;b.setAttribute('aria-pressed',String(k===model));b.addEventListener('click',()=>{model=k;box.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLegend();draw();});box.append(b);});
- function renderLegend(){const L=M.models[model].label;const n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren(...COLORS.map((c,i)=>{const s=document.createElement('span');s.innerHTML=`<i style="background:${c}"></i>C${i+1} · ${n[i]}`;return s;}));const note=document.createElement('span');note.textContent='· '+NOTES[model];legend.append(note);}
+ function chips(list,get,set){const g=document.createElement('div');g.className='map-models';list.forEach(([k,label])=>{const b=document.createElement('button');b.textContent=label;b.setAttribute('aria-pressed',String(k===get()));b.addEventListener('click',()=>{set(k);g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLegend();draw();});g.append(b);});return g;}
+ box.append(chips(MODELS,()=>model,k=>model=k),chips(STYLES,()=>style,k=>style=k));box.style.flexDirection='column';box.style.alignItems='flex-end';
+ // grid: rows by map y, each row by map x -> neighbours on the map stay neighbours in the grid
+ function layout(k){if(grid[k])return grid[k];const D=M.models[k],n=D.x.length,C=Math.ceil(Math.sqrt(n)),ids=[...Array(n).keys()].sort((a,b)=>D.y[a]-D.y[b]),pos=new Array(n);
+  for(let r=0;r*C<n;r++){ids.slice(r*C,(r+1)*C).sort((a,b)=>D.x[a]-D.x[b]).forEach((id,c)=>pos[id]=[c,r]);}return grid[k]={C,R:Math.ceil(n/C),pos};}
+ function shapePath(ctx,name,x,y,r){ctx.beginPath();
+  const polar=f=>{for(let a=0;a<=96;a++){const t=a/96*Math.PI*2,rr=r*f(t);a?ctx.lineTo(x+rr*Math.cos(t),y+rr*Math.sin(t)):ctx.moveTo(x+rr*Math.cos(t),y+rr*Math.sin(t));}ctx.closePath();};
+  if(name==='circle')ctx.arc(x,y,r*.92,0,7);
+  else if(name==='scallop')polar(t=>.86+.09*Math.cos(12*t));
+  else if(name==='flower')polar(t=>.62+.36*Math.abs(Math.cos(2.5*t)));
+  else if(name==='star')polar(t=>.55+.42*Math.pow(Math.cos(4*t)**2,3));
+  else if(name==='octagon'){for(let a=0;a<8;a++){const t=Math.PI/8+a*Math.PI/4;a?ctx.lineTo(x+r*.95*Math.cos(t),y+r*.95*Math.sin(t)):ctx.moveTo(x+r*.95*Math.cos(t),y+r*.95*Math.sin(t));}ctx.closePath();}
+  else if(name==='diamond'){ctx.moveTo(x,y-r);ctx.lineTo(x+r*.9,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r*.9,y);ctx.closePath();}
+  else if(name==='arch'){ctx.moveTo(x-r*.8,y+r*.9);ctx.lineTo(x-r*.8,y-r*.05);ctx.arc(x,y-r*.05,r*.8,Math.PI,0);ctx.lineTo(x+r*.8,y+r*.9);ctx.closePath();}
+  else ctx.roundRect(x-r*.85,y-r*.85,r*1.7,r*1.7,r*.42);}
+ function renderLegend(){const L=M.models[model].label;const n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren();
+  if(style==='rings'){legend.innerHTML='<span>outer = depth AE cluster</span><span>· ring = RGB AE cluster</span><span>· dot = edges AE cluster</span><span>· size = Raine classifier “open” score</span><span>· same colour in two rings ≠ same category</span>';return;}
+  COLORS.forEach((c,i)=>{const s=document.createElement('span');s.innerHTML=`<i style="background:${c};border-radius:${style==='shapes'?'2px':'50%'}"></i>C${i+1} · ${n[i]}`;legend.append(s);});const note=document.createElement('span');note.textContent='· '+NOTES[model];legend.append(note);}
  const times=()=>window.ASSIGNMENT3_COMPARISON?.times||M.times;
+ const openScore=i=>window.ASSIGNMENT3_COMPARISON?.groups?.[0]?.participants?.[0]?.scores?.[i]?.[0];
  function frameAt(t){const T=times();let lo=0,hi=T.length-1;while(lo<hi){const m=(lo+hi)>>1;if(T[m]<t)lo=m+1;else hi=m;}return lo>0&&Math.abs(T[lo-1]-t)<=Math.abs(T[lo]-t)?lo-1:lo;}
  const fmt=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(Math.floor(t%60)).padStart(2,'0');
  function draw(){
   if(!document.body.classList.contains('map-view'))return;
   const w=canvas.clientWidth,h=canvas.clientHeight,dpr=devicePixelRatio||1;if(w<60||h<60)return;
   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
-  const pad=22,side=Math.min(w,h)-pad*2,ox=(w-side)/2,oy=(h-side)/2,D=M.models[model],n=D.x.length;
-  const r=Math.max(2.6,side/125);pts=D.x.map((x,i)=>[ox+x/999*side,oy+D.y[i]/999*side]);
-  const cur=frameAt(window.__mapPreviewTime??(video.currentTime||0));
-  for(let i=0;i<n;i++){const [x,y]=pts[i];ctx.globalAlpha=i<=cur?.95:.3;ctx.fillStyle=COLORS[D.label[i]];ctx.beginPath();ctx.arc(x,y,i<=cur?r:r*.85,0,7);ctx.fill();}
-  const trail=Math.max(0,cur-40);ctx.lineJoin='round';ctx.lineCap='round';
-  for(let i=trail+1;i<=cur;i++){ctx.globalAlpha=.15+.75*(i-trail)/(cur-trail+1);ctx.strokeStyle='#2b2521';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(...pts[i-1]);ctx.lineTo(...pts[i]);ctx.stroke();}
-  ctx.globalAlpha=1;const [cx,cy]=pts[cur];
-  ctx.fillStyle='#fbf6f0';ctx.beginPath();ctx.arc(cx,cy,r*3.6,0,7);ctx.fill();
-  ctx.fillStyle=COLORS[D.label[cur]];ctx.beginPath();ctx.arc(cx,cy,r*2.6,0,7);ctx.fill();
-  ctx.strokeStyle='#2b2521';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,r*3.6,0,7);ctx.stroke();
-  const open=window.ASSIGNMENT3_COMPARISON?.groups?.[0]?.participants?.[0]?.scores?.[cur]?.[0];
-  read.innerHTML=`<span>Frame <strong>${fmt(times()[cur])}</strong> · ${cur+1} / ${n}</span><span>${MODELS.find(m=>m[0]===model)[1]} cluster <strong>C${D.label[cur]+1}</strong></span>`+(open!=null?`<span>Raine classifier · open <strong>${open.toFixed(2)}</strong></span>`:'');
+  const D=M.models[model],n=D.x.length,cur=frameAt(window.__mapPreviewTime??(video.currentTime||0)),TR=12;
+  let at;
+  if(style==='scatter'){const pad=22,side=Math.min(w,h)-pad*2,ox=(w-side)/2,oy=(h-side)/2,r=Math.max(3,side/110);at=i=>[ox+D.x[i]/999*side,oy+D.y[i]/999*side,r];}
+  else{const G=layout(model),pad=10,cs=Math.min((w-pad*2)/G.C,(h-pad*2)/G.R),ox=(w-cs*G.C)/2,oy=(h-cs*G.R)/2;at=i=>[ox+(G.pos[i][0]+.5)*cs,oy+(G.pos[i][1]+.5)*cs,cs*.46];}
+  cells=[...Array(n).keys()].map(at);
+  for(let i=0;i<n;i++){const [x,y,r]=cells[i],lit=i<=cur;
+   if(style==='rings'){const o=openScore(i)??.6,ro=r*(.55+.45*o);
+    ctx.fillStyle=EMPTY;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+    ctx.globalAlpha=lit?1:.28;
+    ctx.fillStyle=COLORS[M.models.depth.label[i]];ctx.beginPath();ctx.arc(x,y,ro,0,7);ctx.fill();
+    ctx.fillStyle=EMPTY;ctx.beginPath();ctx.arc(x,y,ro*.64,0,7);ctx.fill();
+    ctx.fillStyle=COLORS[M.models.rgb.label[i]];ctx.beginPath();ctx.arc(x,y,ro*.5,0,7);ctx.fill();
+    ctx.fillStyle=COLORS[M.models.edges.label[i]];ctx.beginPath();ctx.arc(x,y,ro*.2,0,7);ctx.fill();ctx.globalAlpha=1;}
+   else{ctx.globalAlpha=lit?1:.22;ctx.fillStyle=COLORS[D.label[i]];style==='shapes'?shapePath(ctx,SHAPES[D.label[i]],x,y,r):(ctx.beginPath(),ctx.arc(x,y,r,0,7));ctx.fill();ctx.globalAlpha=1;}
+  }
+  // trail: the last few seconds of the walk
+  ctx.lineJoin='round';ctx.lineCap='round';
+  for(let i=Math.max(1,cur-TR);i<=cur;i++){const k=(i-(cur-TR))/TR;ctx.globalAlpha=.2+.7*k;ctx.strokeStyle=INK;ctx.lineWidth=.8+1.2*k;ctx.beginPath();ctx.moveTo(cells[i-1][0],cells[i-1][1]);ctx.lineTo(cells[i][0],cells[i][1]);ctx.stroke();}
+  ctx.globalAlpha=1;
+  // current frame: enlarged, outlined
+  const [cx,cy,cr]=cells[cur],R=Math.max(cr*2.2,14);
+  ctx.fillStyle=CARD;ctx.beginPath();ctx.arc(cx,cy,R*1.18,0,7);ctx.fill();
+  ctx.fillStyle=COLORS[(style==='rings'?M.models.depth:D).label[cur]];
+  if(style==='shapes')shapePath(ctx,SHAPES[D.label[cur]],cx,cy,R);else{ctx.beginPath();ctx.arc(cx,cy,R,0,7);}ctx.fill();
+  ctx.strokeStyle=INK;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,R*1.18,0,7);ctx.stroke();
+  const o=openScore(cur);
+  read.innerHTML=`<span>Frame <strong>${fmt(times()[cur])}</strong> · ${cur+1} / ${n}</span>`+(style==='rings'?`<span>depth <strong>C${M.models.depth.label[cur]+1}</strong> · rgb <strong>C${M.models.rgb.label[cur]+1}</strong> · edges <strong>C${M.models.edges.label[cur]+1}</strong></span>`:`<span>${MODELS.find(m=>m[0]===model)[1]} cluster <strong>C${D.label[cur]+1}</strong></span>`)+(o!=null?`<span>Raine classifier · open <strong>${o.toFixed(2)}</strong></span>`:'');
  }
- canvas.addEventListener('click',e=>{const rc=canvas.getBoundingClientRect(),mx=e.clientX-rc.left,my=e.clientY-rc.top;let best=-1,bd=1e9;pts.forEach(([x,y],i)=>{const d=(x-mx)**2+(y-my)**2;if(d<bd){bd=d;best=i;}});if(best>=0&&bd<400){video.currentTime=times()[best];draw();}});
+ canvas.addEventListener('click',e=>{const rc=canvas.getBoundingClientRect(),mx=e.clientX-rc.left,my=e.clientY-rc.top;let best=-1,bd=1e9;cells.forEach(([x,y,r],i)=>{const d=(x-mx)**2+(y-my)**2;if(d<bd&&d<(r*1.6)**2){bd=d;best=i;}});if(best>=0){video.currentTime=times()[best];window.__mapPreviewTime=undefined;draw();}});
  canvas.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();video.currentTime=Math.max(0,(video.currentTime||0)+(e.key==='ArrowRight'?1:-1));draw();}});
  ['timeupdate','seeked','loadedmetadata'].forEach(ev=>video.addEventListener(ev,draw));new ResizeObserver(draw).observe(canvas);
  (function loop(){if(!video.paused)draw();requestAnimationFrame(loop);})();
