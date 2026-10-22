@@ -38,7 +38,7 @@ html{scroll-behavior:smooth}.atlas-link{color:var(--muted);text-decoration:none;
 
 .intro .authors{margin-top:9px;font-size:14px;line-height:1.5;color:var(--ink)}
 .map-panel{display:none;flex-direction:column;min-width:0;min-height:0;height:100%;background:var(--card);border:1px solid #e6d9cd;border-radius:6px;padding:18px 22px;gap:12px}
-body.map-view .people{display:none!important}body.map-view .map-panel{display:flex}
+
 .map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}.map-head h2{margin:0 0 4px}.map-head p{font-size:13px;max-width:560px}
 .map-models{display:flex;gap:6px;flex-wrap:wrap}.map-models button{padding:7px 13px;border-radius:999px;background:var(--pale);font-size:13px}.map-models button[aria-pressed=true]{background:var(--ink);color:var(--card)}
 .map-stage{flex:1 1 0;min-height:0;position:relative}.map-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer;border-radius:4px;background:var(--card)}.map-3d{position:absolute;inset:0;width:100%;height:100%;cursor:grab;display:none}.map-3d.on{display:block}
@@ -100,17 +100,35 @@ figure.step{margin:0 0 46px}figcaption{font-size:13px;color:var(--muted);margin-
 }
 .label{display:inline-block;font-family:'Avenir Next',Avenir,sans-serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid #dccbbd;border-radius:999px;padding:1px 7px;margin-right:4px;vertical-align:2px}
 /* hero sized by page width and viewport together, so zooming keeps the proportions */
-:root{--heroH:max(420px,min(calc(100dvh - 235px),calc(min(100vw,1500px) * .47)))}
+:root{--heroH:max(420px,min(calc(100dvh - 430px),calc(min(100vw,1500px) * .47)))}
 .shell{height:auto!important;overflow:visible!important;max-width:1500px;margin:0 auto}
 main{height:var(--heroH);flex:none!important;grid-template-columns:calc((var(--heroH) - 52px) * .5625) minmax(0,1fr)!important}
 .video-panel{min-height:0;height:100%}.stage{aspect-ratio:auto!important;flex:1 1 0!important;min-height:0}
 .people,.map-panel{height:100%!important}
 @media(max-width:900px){main{height:auto;grid-template-columns:1fr!important}.video-panel{height:auto}.stage{aspect-ratio:9/16!important;flex:none!important}.people{height:auto!important}}
-</style></head><body><div class="shell" id="top">
+.a3-strip{max-width:1500px;margin:14px auto 0;padding:0 32px}.a3-strip-head{font-size:12px;color:var(--muted);margin-bottom:8px}.a3-strip-head b{color:var(--ink)}
+.a3-strip .people{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:none!important;height:190px!important;gap:12px}
+.a3-strip .person{padding:12px 14px}.a3-strip .person h2{font-size:17px}.a3-strip .person-head{margin-bottom:6px}.a3-strip .bars{gap:4px;margin-bottom:4px}
+main{grid-template-columns:calc((var(--heroH) - 52px) * .5625) minmax(0,1fr)!important}
+.p2-band{margin:0 0 30px}.p2-band .grid3 img{border-radius:10px;background:var(--card)}
+@media(max-width:1100px){.a3-strip .people{grid-template-columns:1fr 1fr!important;height:auto!important}.a3-strip .chart{height:150px}}
+@media(max-width:900px){.a3-strip{padding:0 20px}.a3-strip .people{grid-template-columns:1fr!important}}
+@media print{.a3-strip .people{height:auto!important}}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.grid2 img{margin-top:0!important}
+h4.who{font-family:Georgia,serif;font-weight:400;font-size:18px;margin:16px 0 8px}
+.a3-strip{width:100%;max-width:none;margin:14px 0 0;padding:0;align-self:stretch}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.howto{margin:6px 0 0;padding-left:16px;font-size:12.5px;color:#4b3f38;line-height:1.45}.howto li{margin:2px 0}
+.map-read{font-size:12.5px;line-height:1.5}.map-read .now{font-size:15px}.map-read .sub,.map-legend .sub{color:var(--muted);font-size:11.5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+.legend-title{font-family:Georgia,serif;font-size:15px;margin-bottom:4px}.legend-sub{font-weight:600;font-size:12px;margin:8px 0 3px}
+.map-legend details{margin-top:8px;font-size:12px}.map-legend summary{cursor:pointer;color:var(--blue)}
+.map-legend .legend-grid{margin-top:6px}
+</style></head><body class="map-view"><div class="shell" id="top">
 <header><span class="brand">Quantitative aesthetics</span><small>SCI 6492 Quantitative Aesthetics · Classifiers + Autoencoders · Raine + Pengfeiyu Chen</small><button class="record-exit" id="exitRecord">Exit recording view</button></header>
-<div class="intro"><div><h1>Harvard Widener Library</h1><p>How machine-learning models read one walk through a library · A3 Classifiers (arch / door · open / enclosed) · A4 Autoencoders (RGB · depth · edges)</p><p class="authors">Raine (Chunyu) Sha &amp; Pengfeiyu Chen</p></div><div class="tools"><label class="file">Load video<input id="videoFile" type="file" accept="video/*"></label><label class="file">Load scores<input id="scoreFile" type="file" accept=".json,application/json"></label><button id="curveMode" aria-pressed="false">Show raw curves</button><button class="primary" id="record">Recording view</button></div></div>
+<div class="intro"><div><h1>Harvard Widener Library</h1><p>How machine-learning models read one walk through a library · A4 Autoencoders (RGB · depth · edges) · A3 Classifiers (arch / door · open / enclosed)</p><p class="authors">Raine (Chunyu) Sha &amp; Pengfeiyu Chen</p></div><div class="tools"><label class="file">Load video<input id="videoFile" type="file" accept="video/*"></label><label class="file">Load scores<input id="scoreFile" type="file" accept=".json,application/json"></label><button id="curveMode" aria-pressed="false">Show raw curves</button><button class="primary" id="record">Recording view</button></div></div>
 <div id="status" role="status" aria-live="polite">Load your walkthrough and the scores from your trained models.</div><nav class="groups" id="groups" aria-label="Category set"></nav>
-<main><section class="video-panel" aria-label="Walkthrough"><div class="video-caption"><strong id="videoName">Walkthrough</strong><time id="clock">00:00 / —</time></div><div class="stage"><video id="video" controls playsinline preload="metadata"></video><div class="video-empty" id="videoEmpty"><strong>Your space, in motion.</strong><p>Choose a local video to begin.</p></div></div></section><div class="people" id="people"></div><section class="map-panel" id="mapPanel" aria-label="Autoencoder map"><div class="map-stage" id="mapStage"><canvas class="map-canvas" id="mapCanvas" tabindex="0" aria-label="Embedding map of all frames. Click a tile to seek the video."></canvas></div><aside class="map-side"><div class="map-head"><h2>Autoencoder map</h2><p>Assignment 4 · the same 1000 frames, one tile each, arranged by what each model learned. Tiles light up as the walk passes them; click one to jump there.</p></div><div class="map-models" id="mapModels" role="group" aria-label="Model and view"></div><div class="map-read" id="mapRead"></div><div class="map-legend" id="mapLegend"></div></aside></section></main>
+<main><section class="video-panel" aria-label="Walkthrough"><div class="video-caption"><strong id="videoName">Walkthrough</strong><time id="clock">00:00 / —</time></div><div class="stage"><video id="video" controls playsinline preload="metadata"></video><div class="video-empty" id="videoEmpty"><strong>Your space, in motion.</strong><p>Choose a local video to begin.</p></div></div></section><section class="map-panel" id="mapPanel" aria-label="Autoencoder map"><div class="map-stage" id="mapStage"><canvas class="map-canvas" id="mapCanvas" tabindex="0" aria-label="Embedding map of all frames. Click a tile to seek the video."></canvas></div><aside class="map-side"><div class="map-head"><h2>Autoencoder map</h2><ul class="howto"><li><b>1 tile = 1 moment</b> of the video (1000 in all).</li><li><b>Tiles close together</b> look alike to the model.</li><li><b>Same colour = same group</b> the model formed on its own — nobody gave it labels.</li><li>Tiles fill in as the video plays; click one to jump there.</li></ul></div><div class="map-models" id="mapModels" role="group" aria-label="Model and view"></div><div class="map-read" id="mapRead"></div><div class="map-legend" id="mapLegend"></div></aside></section></main><div class="a3-strip"><div class="a3-strip-head"><b>Assignment 3 · classifier scores</b> · synced to the same video · curves = 1.5 s mean, bars = raw frame score</div><div class="people" id="people"></div></div>
 <footer>Curves: 1.5s mean · Bars: original frame scores · Scores compare two classes, not objective openness.<a class="atlas-link" href="#training-atlas">Image collections ↓</a></footer></div>
 <nav class="doc-nav" aria-label="Sections"><a href="#top">Results</a><a href="#findings">Key observations</a><a href="#a3">A3 · Classifiers</a><a href="#training-atlas">A3 · Image sets</a><a href="#a4">A4 · Autoencoders</a><a href="#a4-part2">A4 · Semantic topography</a><a href="#notes">Notes &amp; limits</a></nav>
 
@@ -118,6 +136,8 @@ main{height:var(--heroH);flex:none!important;grid-template-columns:calc((var(--h
  <span class="kicker">Before the process</span>
  <h2 id="findings-h">What we observed</h2>
  <p class="lead">Our question across both assignments: <b>how do two people’s readings of concrete elements and abstract spatial qualities, taught through the images each of us chose, turn into different ways for a model to read the same walk through Widener Library — and what does a model find when we stop naming the categories?</b></p>
+<figure class="p2-band" id="p2-preview"><div class="grid3"><img loading="lazy" src="./assets/a4/p1_cards_front.jpg" alt="Cards, front"><img loading="lazy" src="./assets/a4/p2_cards_iso45.jpg" alt="Cards, 45 degrees"><img loading="lazy" src="./assets/a4/p3_shapes_relief.jpg" alt="Cluster shapes relief"><img loading="lazy" src="./assets/a4/p4_shapes_top.jpg" alt="Cluster shapes, top"><img loading="lazy" src="./assets/a4/p5_terrace_iso45.jpg" alt="Terraced landscape"><img loading="lazy" src="./assets/a4/p6_circles_three_models.jpg" alt="Rings, three models"></div>
+  <figcaption>250 tiles (every 4th frame), 16×16. Cards keep each frame’s depth relief; shapes give each cluster its own outline with a flat top at the frame’s mean depth; the terrace removes the gaps and steps depth into 6 levels; rings stack three models in one tile. Previews rendered in Python; the Blender version is being built by Pengfeiyu Chen.</figcaption></div></figure></div><figcaption>Assignment 4 · Part 2 previews · 250 depth tiles laid out by the depth autoencoder’s map: cards with each frame’s depth relief, one shape per cluster, a terraced landscape and rings stacking three models. Full description in <a href="#a4-part2">Semantic topography</a>.</figcaption></figure>
  <div class="cards">
   <article class="card c-orange"><span class="tag">A3 · observation</span><h3>Same verdict on most frames, but not the same way.</h3><p>Raine’s and Chen’s models pick the same class on 90.4% of frames for arch/door and 87.4% for open/enclosed. Yet the scores correlate more for open/enclosed (0.83) than for arch/door (0.72). Agreement between models is not accuracy against the space.</p></article>
   <article class="card c-blue"><span class="tag">A3 · observation</span><h3>“Arch” wins almost everywhere.</h3><p>Both arch/door models call most frames arch (Raine 96%, Chen 88%). Each model must choose one of two words; it cannot say “both” or “neither”.</p></article>
@@ -156,9 +176,9 @@ main{height:var(--heroH);flex:none!important;grid-template-columns:calc((var(--h
   <p class="small">Only the classification head is trained, not CLIP itself. Each model is forced to choose between its two classes; there is no “both” or “neither”.</p></div></div>
 
  <figure class="step" id="a3-top5"><span class="num">04</span><div><h3>Top 5 frames per category, per model</h3>
-  <div class="tabs" role="tablist"><button aria-pressed="true" data-top="raine">Raine</button><button aria-pressed="false" data-top="chen">Pengfeiyu Chen</button></div>
-  <div class="top5" data-who="raine"><img loading="lazy" src="./assets/a3/raine_open_top5.jpg" alt="Raine open top 5"><img loading="lazy" src="./assets/a3/raine_enclosed_top5.jpg" alt="Raine enclosed top 5"><img loading="lazy" src="./assets/a3/raine_arch_top5.jpg" alt="Raine arch top 5"><img loading="lazy" src="./assets/a3/raine_door_top5.jpg" alt="Raine door top 5"></div>
-  <div class="top5" data-who="chen" hidden><img loading="lazy" src="./assets/a3/chen_open_top5.jpg" alt="Chen open top 5"><img loading="lazy" src="./assets/a3/chen_enclosed_top5.jpg" alt="Chen enclosed top 5"><img loading="lazy" src="./assets/a3/chen_arch_top5.jpg" alt="Chen arch top 5"><img loading="lazy" src="./assets/a3/chen_door_top5.jpg" alt="Chen door top 5"></div>
+  
+  <h4 class="who">Raine (Chunyu) Sha</h4><div class="top5 grid2" data-who="raine"><img loading="lazy" src="./assets/a3/raine_open_top5.jpg" alt="Raine open top 5"><img loading="lazy" src="./assets/a3/raine_enclosed_top5.jpg" alt="Raine enclosed top 5"><img loading="lazy" src="./assets/a3/raine_arch_top5.jpg" alt="Raine arch top 5"><img loading="lazy" src="./assets/a3/raine_door_top5.jpg" alt="Raine door top 5"></div>
+  <h4 class="who">Pengfeiyu Chen</h4><div class="top5 grid2" data-who="chen"><img loading="lazy" src="./assets/a3/chen_open_top5.jpg" alt="Chen open top 5"><img loading="lazy" src="./assets/a3/chen_enclosed_top5.jpg" alt="Chen enclosed top 5"><img loading="lazy" src="./assets/a3/chen_arch_top5.jpg" alt="Chen arch top 5"><img loading="lazy" src="./assets/a3/chen_door_top5.jpg" alt="Chen door top 5"></div>
   <figcaption>The five highest-scoring frames per class (time · score): what each model is most sure about, not frames we checked as correct. Timelines are the interactive charts at the top (curves = 1.5 s moving mean, bars = raw frame score).</figcaption></div></figure>
 
  <div class="step" id="a3-results"><span class="num">05</span><div><h3>Results <span class="label">observation</span></h3>
@@ -229,8 +249,8 @@ main{height:var(--heroH);flex:none!important;grid-template-columns:calc((var(--h
 
  <figure class="step" id="a4-arch"><span class="num">05</span><div><h3>Archetypes per category, per dataset</h3>
   <p>For each cluster: the 4 frames closest to its centre (at least 3 s apart, so we do not show 4 copies of one shot), 2 boundary frames (almost as close to another cluster, red label = that cluster) and 3 outliers. Depth and edges show what the model saw, next to the original frame.</p>
-  <div class="tabs" role="tablist"><button aria-pressed="true" data-arch="depth">Depth</button><button aria-pressed="false" data-arch="rgb">RGB</button><button aria-pressed="false" data-arch="edges">Edges</button><button aria-pressed="false" data-arch="clip">CLIP</button></div>
-  <img class="arch" data-arch="depth" loading="lazy" src="./assets/a4/archetypes_depth_umap_k8.jpg" alt="Depth archetypes"><img class="arch" data-arch="rgb" hidden loading="lazy" src="./assets/a4/archetypes_rgb_umap_k8.jpg" alt="RGB archetypes"><img class="arch" data-arch="edges" hidden loading="lazy" src="./assets/a4/archetypes_edges_umap_k8.jpg" alt="Edges archetypes"><img class="arch" data-arch="clip" hidden loading="lazy" src="./assets/a4/archetypes_clip_umap_k8.jpg" alt="CLIP archetypes">
+  
+  <div class="grid2 arch-grid"><img class="arch" data-arch="depth" loading="lazy" src="./assets/a4/archetypes_depth_umap_k8.jpg" alt="Depth archetypes"><img class="arch" data-arch="rgb" loading="lazy" src="./assets/a4/archetypes_rgb_umap_k8.jpg" alt="RGB archetypes"><img class="arch" data-arch="edges" loading="lazy" src="./assets/a4/archetypes_edges_umap_k8.jpg" alt="Edges archetypes"><img class="arch" data-arch="clip" loading="lazy" src="./assets/a4/archetypes_clip_umap_k8.jpg" alt="CLIP archetypes"></div>
   <ul class="readings">
    <li><b>RGB</b> groups by light, colour and composition; a cluster often mixes places (one spans 18 separate stretches of the walk). Clearest: the vaulted reading room, red tables on green carpet.</li>
    <li><b>Depth</b> groups by spatial form across materials: tunnel corridors ending in an arch (brick and marble together), deep halls, close flat surfaces, foreground furniture.</li>
@@ -256,9 +276,7 @@ main{height:var(--heroH);flex:none!important;grid-template-columns:calc((var(--h
  <h2 id="p2-h">Semantic topography</h2>
  <p class="lead">Brief: use the self-organising maps from the embeddings to design a tile wall relief or landscape, with grey as height. Consider the number of tiles, how tight they sit, and whether clusters map to materials or colours.</p>
  <div class="step"><span class="num">01</span><div><h3>Our mapping</h3><p>Dataset = the Widener depth frames, so Part 1 and Part 2 read the same space. Each tile is one frame; tiles are laid out by the depth autoencoder’s map (rows by map y, each row by map x) so neighbours stay neighbours; tile height = the frame’s depth grey (near = high); colour or shape = its depth cluster. The <a href="#top">3D relief view above</a> is the live version: 1000 blocks, height = mean depth, lighting up as the walk passes.</p></div></div>
- <figure class="step"><span class="num">02</span><div><h3>Variants: granularity, compactness, material</h3>
-  <div class="grid3"><img loading="lazy" src="./assets/a4/p1_cards_front.jpg" alt="Cards, front"><img loading="lazy" src="./assets/a4/p2_cards_iso45.jpg" alt="Cards, 45 degrees"><img loading="lazy" src="./assets/a4/p3_shapes_relief.jpg" alt="Cluster shapes relief"><img loading="lazy" src="./assets/a4/p4_shapes_top.jpg" alt="Cluster shapes, top"><img loading="lazy" src="./assets/a4/p5_terrace_iso45.jpg" alt="Terraced landscape"><img loading="lazy" src="./assets/a4/p6_circles_three_models.jpg" alt="Rings, three models"></div>
-  <figcaption>250 tiles (every 4th frame), 16×16. Cards keep each frame’s depth relief; shapes give each cluster its own outline with a flat top at the frame’s mean depth; the terrace removes the gaps and steps depth into 6 levels; rings stack three models in one tile. Previews rendered in Python; the Blender version is being built by Pengfeiyu Chen.</figcaption></div></figure>
+ <div class="step"><span class="num">02</span><div><h3>Variants: granularity, compactness, material</h3><p>See the <a href="#p2-preview">variant sheet at the top of the documentation</a>; the live, detailed version is the <a href="#top">3D relief view</a>.</p></div></div>
  <div class="todo">Final relief, render and reflection: to be added.</div>
 </section>
 
@@ -398,10 +416,10 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
  const STYLES=[['shapes','Shapes'],['rings','Rings · 3 models'],['3d','3D relief'],['scatter','UMAP scatter'],['tour','Auto tour']];
  const NOTES={depth:'groups by spatial form: tunnels, deep halls, close surfaces',rgb:'groups by light and colour, across places',edges:'groups by line density and ornament',clip:'pretrained reference: groups by place / object'};
  const panel=document.getElementById('mapPanel'),canvas=document.getElementById('mapCanvas'),read=document.getElementById('mapRead'),legend=document.getElementById('mapLegend'),box=document.getElementById('mapModels');
- const video=document.getElementById('video');let model='depth',style='shapes',cells=[],grid={},tour=false,tourStep=0,tourT=performance.now();
+ const video=document.getElementById('video');let model='depth',style='shapes',cells=[],grid={},tour=true,tourStep=0,tourT=performance.now();
  const tab=document.createElement('button');tab.className='map-tab';tab.textContent='Autoencoder map · Assignment 4';tab.setAttribute('aria-pressed','false');
  tab.addEventListener('click',()=>{const on=document.body.classList.toggle('map-view');tab.setAttribute('aria-pressed',String(on));tab.textContent=on?'Classifier curves · Assignment 3':'Autoencoder map · Assignment 4';draw();if(!on)window.dispatchEvent(new Event('resize'));});
- document.getElementById('record').before(tab);
+ /* map always visible; no toggle */
  function chips(list,get,set){const g=document.createElement('div');g.className='map-models';list.forEach(([k,label])=>{const b=document.createElement('button');b.textContent=label;b.setAttribute('aria-pressed',String(k===get()));b.addEventListener('click',()=>{set(k);g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLegend();draw();});g.append(b);});return g;}
  box.append(chips(MODELS,()=>model,k=>model=k),chips(STYLES,()=>tour?'tour':style,k=>{tour=k==='tour';if(!tour)style=k;else{tourStep=0;style='shapes';}}));
  // grid: rows by map y, each row by map x -> neighbours on the map stay neighbours in the grid
@@ -418,33 +436,39 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
   else if(name==='arch'){ctx.moveTo(x-r*.8,y+r*.9);ctx.lineTo(x-r*.8,y-r*.05);ctx.arc(x,y-r*.05,r*.8,Math.PI,0);ctx.lineTo(x+r*.8,y+r*.9);ctx.closePath();}
   else ctx.roundRect(x-r*.85,y-r*.85,r*1.7,r*1.7,r*.42);}
 
- // ---- 3D relief (three.js): tile height = mean grey of the frame's depth map ----
+ // ---- 3D relief (three.js): true isometric; each tile = 8x8 cells of that frame's depth image (near = high) ----
  const three={el:document.createElement('canvas'),ok:!!window.THREE};three.el.className='map-3d';document.getElementById('mapStage').append(three.el);
- let az=Math.PI/4,el=0.85,drag=null,lastCur=-1,lastModel='';
+ const ISO_AZ=Math.PI/4,ISO_EL=Math.atan(1/Math.SQRT2);let az=ISO_AZ,el=ISO_EL,drag=null,lastCur=-1,lastModel='';
+ const B36='0123456789abcdefghijklmnopqrstuvwxyz',S=8,d8=M.depth8||'';
  if(three.ok){const T=window.THREE;three.r=new T.WebGLRenderer({canvas:three.el,antialias:true});three.r.setClearColor(0xfbf6f0);
-  three.s=new T.Scene();three.cam=new T.OrthographicCamera(-1,1,1,-1,-50,50);
-  three.s.add(new T.AmbientLight(0xffffff,.72));const sun=new T.DirectionalLight(0xffffff,.55);sun.position.set(-.6,1,.4);three.s.add(sun);
-  const n=M.models.depth.x.length;three.geo=new T.BoxGeometry(1,1,1);three.geo.translate(0,.5,0);
-  three.mesh=new T.InstancedMesh(three.geo,new T.MeshLambertMaterial(),n);three.s.add(three.mesh);
-  three.cur=new T.Mesh(three.geo,new T.MeshLambertMaterial());three.s.add(three.cur);
-  three.edge=new T.LineSegments(new T.EdgesGeometry(three.geo),new T.LineBasicMaterial({color:0x2b2521}));three.s.add(three.edge);
+  three.s=new T.Scene();three.cam=new T.OrthographicCamera(-1,1,1,-1,-200,200);
+  three.s.add(new T.HemisphereLight(0xffffff,0xd9c8b8,.75));const sun=new T.DirectionalLight(0xffffff,.6);sun.position.set(-.5,1,.25);three.s.add(sun);
+  const n=M.models.depth.x.length;const geo=new T.BoxGeometry(1,1,1);geo.translate(0,.5,0);
+  three.mesh=new T.InstancedMesh(geo,new T.MeshLambertMaterial(),n*S*S);three.s.add(three.mesh);
+  three.base=new T.InstancedMesh(geo,new T.MeshLambertMaterial(),n);three.s.add(three.base);
+  three.edge=new T.LineSegments(new T.EdgesGeometry(geo),new T.LineBasicMaterial({color:0x2b2521}));three.s.add(three.edge);
   three.el.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,az,el,moved:false};three.el.setPointerCapture(e.pointerId);});
-  three.el.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;az=drag.az-dx*.008;el=Math.max(.25,Math.min(1.45,drag.el+dy*.006));draw();});
-  three.el.addEventListener('pointerup',e=>{const d=drag;drag=null;if(d&&!d.moved){const rc=three.el.getBoundingClientRect(),ray=new T.Raycaster();ray.setFromCamera(new T.Vector2((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1),three.cam);const hit=ray.intersectObject(three.mesh)[0];if(hit&&hit.instanceId!=null){video.currentTime=times()[hit.instanceId];window.__mapPreviewTime=undefined;draw();}}});
+  three.el.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;az=drag.az-dx*.008;el=Math.max(.3,Math.min(1.45,drag.el+dy*.006));draw();});
+  three.el.addEventListener('pointerup',e=>{const d=drag;drag=null;if(d&&!d.moved){const rc=three.el.getBoundingClientRect(),ray=new T.Raycaster();ray.setFromCamera(new T.Vector2((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1),three.cam);const hit=ray.intersectObject(three.base)[0]||ray.intersectObject(three.mesh)[0];const id=hit&&(hit.object===three.base?hit.instanceId:Math.floor(hit.instanceId/(S*S)));if(id!=null){video.currentTime=times()[id];window.__mapPreviewTime=undefined;draw();}}});
+  three.el.addEventListener('dblclick',()=>{az=ISO_AZ;el=ISO_EL;draw();});
  }
  const mix=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);const ch=s=>Math.round(((A>>s)&255)*(1-t)+((B>>s)&255)*t);return (ch(16)<<16)|(ch(8)<<8)|ch(0);};
+ const cellH=(i,k)=>.08+1.5*(B36.indexOf(d8[i*S*S+k])/35)**1.15;
  function draw3d(cur){
   if(!three.ok){read.textContent='3D view needs WebGL / three.js';return;}
   const T=window.THREE,w=three.el.clientWidth,h=three.el.clientHeight;if(w<60||h<60)return;
   three.r.setPixelRatio(devicePixelRatio||1);three.r.setSize(w,h,false);
-  const G=layout(model),D=M.models[model],dm=M.depth_mean,n=D.x.length,lo=Math.min(...dm),hi=Math.max(...dm),H=t=>.15+3.2*((t-lo)/(hi-lo))**1.2;
+  const G=layout(model),D=M.models[model],n=D.x.length,P=1.18,tile=1,cs=tile/S;
   const o=new T.Object3D(),c=new T.Color();
-  if(lastModel!==model||lastCur!==cur){for(let i=0;i<n;i++){const [gx,gy]=G.pos[i];o.position.set(gx-G.C/2+.5,0,gy-G.R/2+.5);o.scale.set(.84,H(dm[i]),.84);o.updateMatrix();three.mesh.setMatrixAt(i,o.matrix);
-    c.setHex(i<=cur?parseInt(COLORS[D.label[i]].slice(1),16):mix(COLORS[D.label[i]],'#efe3d8',.72));three.mesh.setColorAt(i,c);}
-   three.mesh.instanceMatrix.needsUpdate=true;three.mesh.instanceColor.needsUpdate=true;lastCur=cur;lastModel=model;
-   const [gx,gy]=G.pos[cur];[three.cur,three.edge].forEach(m=>{m.position.set(gx-G.C/2+.5,0,gy-G.R/2+.5);m.scale.set(1.3,H(dm[cur])+3,1.3);});three.cur.material.color.setHex(parseInt(COLORS[D.label[cur]].slice(1),16));}
-  const rad=Math.hypot(G.C,G.R)/2*1.06+1.5,asp=w/h,vy=rad*Math.sin(el)+4*Math.cos(el)+1,hy=Math.max(vy,rad/asp),hx=hy*asp;three.cam.left=-hx;three.cam.right=hx;three.cam.top=hy;three.cam.bottom=-hy;three.cam.updateProjectionMatrix();
-  three.cam.position.set(Math.sin(az)*Math.cos(el)*30,Math.sin(el)*30,Math.cos(az)*Math.cos(el)*30);three.cam.lookAt(0,0,0);
+  if(lastModel!==model||lastCur!==cur){
+   for(let i=0;i<n;i++){const [gx,gy]=G.pos[i],X=(gx-G.C/2+.5)*P,Z=(gy-G.R/2+.5)*P,lit=i<=cur,col=lit?parseInt(COLORS[D.label[i]].slice(1),16):mix(COLORS[D.label[i]],'#efe3d8',.7);
+    o.position.set(X,0,Z);o.rotation.set(0,0,0);o.scale.set(tile,.08,tile);o.updateMatrix();three.base.setMatrixAt(i,o.matrix);c.setHex(lit?mix(COLORS[D.label[i]],'#2b2521',.25):mix(COLORS[D.label[i]],'#efe3d8',.8));three.base.setColorAt(i,c);
+    for(let k=0;k<S*S;k++){const r=Math.floor(k/S),q=k%S;o.position.set(X-tile/2+cs*(q+.5),.08,Z-tile/2+cs*(r+.5));o.scale.set(cs*.96,cellH(i,k)*(lit?1:.55),cs*.96);o.updateMatrix();three.mesh.setMatrixAt(i*S*S+k,o.matrix);c.setHex(col);three.mesh.setColorAt(i*S*S+k,c);}}
+   three.mesh.instanceMatrix.needsUpdate=three.base.instanceMatrix.needsUpdate=true;three.mesh.instanceColor.needsUpdate=three.base.instanceColor.needsUpdate=true;lastCur=cur;lastModel=model;
+   const [gx,gy]=G.pos[cur];let mx=0;for(let k=0;k<S*S;k++)mx=Math.max(mx,cellH(cur,k));three.edge.position.set((gx-G.C/2+.5)*P,0,(gy-G.R/2+.5)*P);three.edge.scale.set(tile*1.12,mx+.35,tile*1.12);}
+  const span=Math.max(G.C,G.R)*P,rad=span/Math.SQRT2*1.04,vy=rad*Math.sin(el)+2.2*Math.cos(el)+.6,asp=w/h,hy=Math.max(vy,rad/asp),hx=hy*asp;
+  three.cam.left=-hx;three.cam.right=hx;three.cam.top=hy;three.cam.bottom=-hy;three.cam.updateProjectionMatrix();
+  three.cam.position.set(Math.sin(az)*Math.cos(el)*60,Math.sin(el)*60,Math.cos(az)*Math.cos(el)*60);three.cam.lookAt(0,0.5,0);
   three.r.render(three.s,three.cam);
  }
  const MEAN={ // our reading of the archetype frames (UMAP · k-means k=8), see Assignment 4 › Archetypes
@@ -456,14 +480,14 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
   if(shape==='rings'){x.beginPath();x.arc(9,9,8,0,7);x.fill();x.fillStyle=EMPTY;x.beginPath();x.arc(9,9,5.2,0,7);x.fill();x.fillStyle=COLORS[k];x.beginPath();x.arc(9,9,3.6,0,7);x.fill();}
   else if(shape==='3d'){x.fillRect(3,7,12,9);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(3,4,12,3);}
   else shapePath(x,shape,9,9,8);x.fill();return c;}
- function renderLegend(){const D=M.models[model],L=D.label,n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren();
-  const head=document.createElement('div');head.className='legend-head';
-  if(style==='rings'){head.innerHTML='<b>Rings</b> · outer = depth cluster · inner disc = RGB cluster · centre dot = edges cluster · size = Raine’s classifier “open” score (bigger = more open). Colours below = each model’s own clusters.';legend.append(head);
-   ['depth','rgb','edges'].forEach(k=>{const row=document.createElement('div');row.className='legend-row';row.innerHTML=`<em>${k}</em>`;COLORS.forEach((c,i)=>{const s=document.createElement('span');s.title=MEAN[k][i];s.append(icon(i,'circle'));s.append(` C${i+1} ${MEAN[k][i]}`);row.append(s);});legend.append(row);});return;}
-  head.innerHTML=(style==='3d'?'<b>3D relief</b> · one block per frame · <b>height</b> = mean grey of the frame’s depth image (near = high) · ':'')+`<b>${MODELS.find(m=>m[0]===model)[1]}</b> · ${NOTES[model]} · solid = already passed in the video, pale = still ahead, outlined = now`+(style==='scatter'?' · position = raw UMAP map':' · grid built from the UMAP map (rows by y, each row by x)');legend.append(head);
-  const grid=document.createElement('div');grid.className='legend-grid';
-  COLORS.forEach((c,i)=>{const s=document.createElement('span');s.append(icon(i,style==='shapes'?SHAPES[i]:style==='3d'?'3d':'circle'));const t=document.createElement('span');t.innerHTML=`<b>C${i+1}</b> ${MEAN[model][i]} <small>· ${n[i]}</small>`;s.append(t);grid.append(s);});
-  legend.append(grid);const note=document.createElement('div');note.className='legend-note';note.textContent='Cluster names are our reading of the most typical frames, not labels the model learned.';legend.append(note);}
+ function ringDiagram(){return `<svg viewBox="0 0 230 92" width="100%" style="max-width:220px;display:block" aria-hidden="true"><circle cx="46" cy="46" r="40" fill="${COLORS[1]}"/><circle cx="46" cy="46" r="26" fill="${EMPTY}"/><circle cx="46" cy="46" r="20" fill="${COLORS[2]}"/><circle cx="46" cy="46" r="8" fill="${COLORS[3]}"/><g font-size="11" fill="#2b2521"><line x1="80" y1="22" x2="104" y2="16" stroke="#7b6a5f"/><text x="108" y="19">outer ring → depth group</text><line x1="62" y1="46" x2="104" y2="46" stroke="#7b6a5f"/><text x="108" y="49">disc → RGB group</text><line x1="50" y1="50" x2="104" y2="76" stroke="#7b6a5f"/><text x="108" y="79">dot → edges group</text></g></svg><div class="sub">Bigger circle = the A3 classifier found that moment more open. The three models each have their own C1–C8, so the same colour in two rings is <b>not</b> the same group.</div>`;}
+ function list(k){const L=M.models[k].label;return COLORS.map((c,i)=>`<span><span class="dot" style="background:${c}"></span><b>C${i+1}</b> ${MEAN[k][i]} <small>· ${L.filter(v=>v===i).length}</small></span>`).join('');}
+ function renderLegend(){legend.replaceChildren();const box=document.createElement('div');
+  if(style==='rings'){box.innerHTML=`<div class="legend-title">How to read a ring</div>${ringDiagram()}<details><summary>All groups of the three models</summary>${['depth','rgb','edges'].map(k=>`<div class="legend-sub">${MODELS.find(m=>m[0]===k)[1]}</div><div class="legend-grid">${list(k)}</div>`).join('')}</details>`;}
+  else{const D=M.models[model],L=D.label;box.innerHTML=`<div class="legend-title">The ${MODELS.find(m=>m[0]===model)[1]}’s 8 groups</div><div class="sub">${NOTES[model]}${style==='3d'?' · each tile is that moment’s depth image in 8×8 blocks: <b>taller = nearer</b>':''}</div><div class="legend-grid">`+COLORS.map((c,i)=>{const s=document.createElement('span');s.append(icon(i,style==='shapes'?SHAPES[i]:style==='3d'?'3d':'circle'));return s.outerHTML.replace('</span>',`<span><b>C${i+1}</b> ${MEAN[model][i]} <small>· ${L.filter(v=>v===i).length}</small></span></span>`);}).join('')+`</div>`;
+   box.querySelectorAll('.legend-grid canvas').forEach((cv,i)=>{const fresh=icon(i,style==='shapes'?SHAPES[i]:style==='3d'?'3d':'circle');cv.replaceWith(fresh);});}
+  const note=document.createElement('div');note.className='legend-note';note.textContent='Group names are our reading of each group’s most typical frames, not labels the model learned. Pale = not reached yet in the video.';
+  legend.append(box,note);}
 
  const times=()=>window.ASSIGNMENT3_COMPARISON?.times||M.times;
  const openScore=i=>window.ASSIGNMENT3_COMPARISON?.groups?.[0]?.participants?.[0]?.scores?.[i]?.[0];
@@ -502,16 +526,19 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
   ctx.strokeStyle=INK;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,R*1.18,0,7);ctx.stroke();
   readout(cur);
  }
- function readout(cur){const D=M.models[model],n=D.x.length;
-  const o=openScore(cur),dm=M.depth_mean?.[cur];
-  read.innerHTML=`<span>Frame <strong>${fmt(times()[cur])}</strong> · ${cur+1} / ${n}</span>`+(style==='rings'?`<span>depth <strong>C${M.models.depth.label[cur]+1}</strong> · rgb <strong>C${M.models.rgb.label[cur]+1}</strong> · edges <strong>C${M.models.edges.label[cur]+1}</strong></span>`:`<span>${MODELS.find(m=>m[0]===model)[1]} cluster <strong>C${D.label[cur]+1}</strong></span>`)+(style==='3d'&&dm!=null?`<span>height = mean depth <strong>${dm.toFixed(2)}</strong></span>`:'')+(o!=null?`<span>Raine classifier · open <strong>${o.toFixed(2)}</strong></span>`:'');
+ function readout(cur){const D=M.models[model],n=D.x.length,o=openScore(cur),dm=M.depth_mean?.[cur],t=fmt(times()[cur]);
+  const name=k=>MODELS.find(m=>m[0]===k)[1],grp=(k,c)=>`<span class="dot" style="background:${COLORS[c]}"></span><b>C${c+1}</b> ${MEAN[k][c]}`;
+  const cnt=(k,c)=>M.models[k].label.filter(v=>v===c).length;
+  if(style==='rings')read.innerHTML=`<div class="now">Now <b>${t}</b></div><div>Depth model: ${grp('depth',M.models.depth.label[cur])}</div><div>RGB model: ${grp('rgb',M.models.rgb.label[cur])}</div><div>Edges model: ${grp('edges',M.models.edges.label[cur])}</div>`+(o!=null?`<div class="sub">A3 classifier (Raine): ${(o*100).toFixed(0)}% open</div>`:'');
+  else read.innerHTML=`<div class="now">Now <b>${t}</b></div><div>The ${name(model)} puts this moment in ${grp(model,D.label[cur])}</div><div class="sub">${cnt(model,D.label[cur])} of ${n} moments are in this group</div>`+(style==='3d'&&dm!=null?`<div class="sub">mean depth ${dm.toFixed(2)} (1 = very near)</div>`:'')+(o!=null?`<div class="sub">A3 classifier (Raine): ${(o*100).toFixed(0)}% open</div>`:'');
  }
+
  canvas.addEventListener('click',e=>{const rc=canvas.getBoundingClientRect(),mx=e.clientX-rc.left,my=e.clientY-rc.top;let best=-1,bd=1e9;cells.forEach(([x,y,r],i)=>{const d=(x-mx)**2+(y-my)**2;if(d<bd&&d<(r*1.6)**2){bd=d;best=i;}});if(best>=0){video.currentTime=times()[best];window.__mapPreviewTime=undefined;draw();}});
  canvas.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();video.currentTime=Math.max(0,(video.currentTime||0)+(e.key==='ArrowRight'?1:-1));draw();}});
  ['timeupdate','seeked','loadedmetadata'].forEach(ev=>video.addEventListener(ev,draw));new ResizeObserver(draw).observe(canvas);
  (function loop(now){const on=document.body.classList.contains('map-view');
   if(on&&tour&&now-tourT>9000){tourT=now;tourStep=(tourStep+1)%3;style=['shapes','rings','3d'][tourStep];renderLegend();draw();}
-  if(on&&style==='3d'&&!drag){az+=.0025;draw();}else if(!video.paused)draw();requestAnimationFrame(loop);})(performance.now());
+  if(!video.paused)draw();requestAnimationFrame(loop);})(performance.now());
  renderLegend();window.__drawMap=draw;
 })();
 </script><script>
