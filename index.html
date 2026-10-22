@@ -44,8 +44,8 @@ body.map-view .people{display:none!important}body.map-view .map-panel{display:fl
 .map-canvas{flex:1 1 0;min-height:0;width:100%;display:block;cursor:pointer;border-radius:4px;background:#f4ebe1}
 .map-read{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.map-read strong{color:var(--ink);font-weight:600}
 .map-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.map-legend span{display:inline-flex;align-items:center;gap:5px}.map-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
-.groups button.map-tab{margin-left:auto}
-@media(max-width:900px){.map-panel{height:auto}.map-canvas{flex:none;height:420px}.groups button.map-tab{margin-left:0}}
+.tools button.map-tab{background:var(--ink);color:var(--card)}
+@media(max-width:900px){.map-panel{height:auto}.map-canvas{flex:none;height:420px}}
 </style></head><body><div class="shell">
 <header><span class="brand">Quantitative aesthetics</span><small>Classifiers / Raine + Pengfeiyu Chen</small><button class="record-exit" id="exitRecord">Exit recording view</button></header>
 <div class="intro"><div><h1>Harvard Widener Library</h1><p>Dual-Classifier ML Analysis of Space · Arch / door · Open / enclosed</p><p class="authors">Raine (Chunyu) Sha &amp; Pengfeiyu Chen</p></div><div class="tools"><label class="file">Load video<input id="videoFile" type="file" accept="video/*"></label><label class="file">Load scores<input id="scoreFile" type="file" accept=".json,application/json"></label><button id="curveMode" aria-pressed="false">Show raw curves</button><button class="primary" id="record">Recording view</button></div></div>
@@ -177,8 +177,8 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
  const nav=document.getElementById('groups'),panel=document.getElementById('mapPanel'),canvas=document.getElementById('mapCanvas'),read=document.getElementById('mapRead'),legend=document.getElementById('mapLegend'),box=document.getElementById('mapModels');
  const video=document.getElementById('video');let model='depth',pts=[];
  const tab=document.createElement('button');tab.className='map-tab';tab.textContent='Autoencoder map · Assignment 4';tab.setAttribute('aria-pressed','false');
- tab.addEventListener('click',()=>{document.body.classList.add('map-view');nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===tab)));draw();});
- nav.append(tab);nav.addEventListener('click',e=>{if(e.target!==tab&&e.target.closest('button'))document.body.classList.remove('map-view');});
+ tab.addEventListener('click',()=>{const on=document.body.classList.toggle('map-view');tab.setAttribute('aria-pressed',String(on));tab.textContent=on?'Classifier curves · Assignment 3':'Autoencoder map · Assignment 4';draw();if(!on)window.dispatchEvent(new Event('resize'));});
+ document.getElementById('record').before(tab);
  MODELS.forEach(([k,label])=>{const b=document.createElement('button');b.textContent=label;b.setAttribute('aria-pressed',String(k===model));b.addEventListener('click',()=>{model=k;box.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLegend();draw();});box.append(b);});
  function renderLegend(){const L=M.models[model].label;const n=COLORS.map((_,c)=>L.filter(v=>v===c).length);legend.replaceChildren(...COLORS.map((c,i)=>{const s=document.createElement('span');s.innerHTML=`<i style="background:${c}"></i>C${i+1} · ${n[i]}`;return s;}));const note=document.createElement('span');note.textContent='· '+NOTES[model];legend.append(note);}
  const times=()=>window.ASSIGNMENT3_COMPARISON?.times||M.times;
@@ -189,9 +189,9 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
   const w=canvas.clientWidth,h=canvas.clientHeight,dpr=devicePixelRatio||1;if(w<60||h<60)return;
   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
   const pad=22,side=Math.min(w,h)-pad*2,ox=(w-side)/2,oy=(h-side)/2,D=M.models[model],n=D.x.length;
-  const r=Math.max(2.2,side/190);pts=D.x.map((x,i)=>[ox+x/999*side,oy+D.y[i]/999*side]);
-  const cur=frameAt(video.currentTime||0);
-  for(let i=0;i<n;i++){const [x,y]=pts[i];ctx.globalAlpha=i<=cur?.9:.2;ctx.fillStyle=COLORS[D.label[i]];ctx.beginPath();ctx.arc(x,y,i<=cur?r:r*.85,0,7);ctx.fill();}
+  const r=Math.max(2.6,side/125);pts=D.x.map((x,i)=>[ox+x/999*side,oy+D.y[i]/999*side]);
+  const cur=frameAt(window.__mapPreviewTime??(video.currentTime||0));
+  for(let i=0;i<n;i++){const [x,y]=pts[i];ctx.globalAlpha=i<=cur?.95:.3;ctx.fillStyle=COLORS[D.label[i]];ctx.beginPath();ctx.arc(x,y,i<=cur?r:r*.85,0,7);ctx.fill();}
   const trail=Math.max(0,cur-40);ctx.lineJoin='round';ctx.lineCap='round';
   for(let i=trail+1;i<=cur;i++){ctx.globalAlpha=.15+.75*(i-trail)/(cur-trail+1);ctx.strokeStyle='#2b2521';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(...pts[i-1]);ctx.lineTo(...pts[i]);ctx.stroke();}
   ctx.globalAlpha=1;const [cx,cy]=pts[cur];
@@ -205,6 +205,6 @@ atlasDialog.addEventListener('click',event=>{if(event.target===atlasDialog){cons
  canvas.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();video.currentTime=Math.max(0,(video.currentTime||0)+(e.key==='ArrowRight'?1:-1));draw();}});
  ['timeupdate','seeked','loadedmetadata'].forEach(ev=>video.addEventListener(ev,draw));new ResizeObserver(draw).observe(canvas);
  (function loop(){if(!video.paused)draw();requestAnimationFrame(loop);})();
- renderLegend();
+ renderLegend();window.__drawMap=draw;
 })();
 </script></body></html>
